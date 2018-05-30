@@ -10,13 +10,13 @@ class EditableExtensionPoint extends Component {
     editTreePath: PropTypes.string,
     editExtensionPoint: PropTypes.func,
     mouseOverExtensionPoint: PropTypes.func,
-    treePath: PropTypes.string,
   }
 
   static propTypes = {
     children: PropTypes.node,
     component: PropTypes.string,
     props: PropTypes.object,
+    treePath: PropTypes.string,
   }
 
   constructor(props, context) {
@@ -52,7 +52,7 @@ class EditableExtensionPoint extends Component {
 
   handleEditClick = (event) => {
     const { editExtensionPoint } = this.context
-    editExtensionPoint(this.context.treePath)
+    editExtensionPoint(this.props.treePath)
     this.setState({ mouseOver: false })
     event.stopPropagation()
   }
@@ -71,9 +71,9 @@ class EditableExtensionPoint extends Component {
     /vtex\.pages-editor@.*\/EmptyExtensionPoint/.test(component)
 
   render() {
-    const { treePath } = this.context
     const { children, component, props, ...parentProps } = this.props
     const { editMode, editTreePath, mouseOver } = this.state
+    const { treePath } = parentProps
 
     const isEmpty = this.isEmptyExtensionPoint(component)
     const zIndex = treePath.split('/').length + 1
