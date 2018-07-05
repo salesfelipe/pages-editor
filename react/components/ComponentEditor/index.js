@@ -12,6 +12,7 @@ import BaseInput from '../form/BaseInput'
 import Dropdown from '../form/Dropdown'
 import ErrorListTemplate from '../form/ErrorListTemplate'
 import FieldTemplate from '../form/FieldTemplate'
+import ImageUploader from '../form/ImageUploader'
 import ObjectFieldTemplate from '../form/ObjectFieldTemplate'
 import Radio from '../form/Radio'
 import Toggle from '../form/Toggle'
@@ -33,6 +34,7 @@ const widgets = {
   CheckboxWidget: Toggle,
   RadioWidget: Radio,
   SelectWidget: Dropdown,
+  'image-uploader': ImageUploader,
 }
 
 class ComponentEditor extends Component {

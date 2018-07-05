@@ -9,6 +9,7 @@
     "react": "2.x"
   },
   "dependencies": {
+    "vtex.file-manager": "0.x",
     "vtex.pages-graphql": "1.x",
     "vtex.styleguide": "5.x"
   },
@@ -20,5 +21,10 @@
   "settingsSchema": {},
   "scripts": {
     "postreleasy": "vtex publish -r vtex --verbose"
-  }
+  },
+  "policies": [
+    {
+      "name": "vtex.file-manager:saveFileAsync"
+    }
+  ]
 }
