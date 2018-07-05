@@ -41,11 +41,11 @@ class EmptyExtensionPoint extends Component {
   render() {
     const { getEditMode } = this.context
     const editMode = getEditMode()
-    const className = `${editMode ? 'pa7-ns pa5 mw7 center' : 'dn'}`
+    const className = `${editMode ? 'h-100 pa7-ns pa5' : 'dn'}`
 
     return (
       <div className={className}>
-        <div className="w-100 ba b--blue br2 b--dashed pa6-ns pa6 blue tc bg-washed-blue bw1">
+        <div className="w-100 h-100 flex flex-column items-center justify-center ba b--blue br2 b--dashed pa6-ns pa6 blue tc bg-washed-blue bw1">
           This is an empty extension point
           <div className="fw7 pt2">CLICK TO EDIT</div>
         </div>
