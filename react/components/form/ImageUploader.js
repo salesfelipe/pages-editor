@@ -2,54 +2,33 @@ import PropTypes from 'prop-types'
 import React, { Component, Fragment } from 'react'
 import Dropzone from 'react-dropzone'
 import { RenderContextConsumer } from 'render'
-import { Spinner } from 'vtex.styleguide'
+import { graphql } from 'react-apollo'
+
+import UploadFile from '../../queries/UploadFile.graphql'
 
 class ImageUploader extends Component {
-  constructor(props) {
-    super(props)
+  handleImageDrop = async (acceptedFiles, rejectedFiles) => {
+    console.log('==> acceptedFiles', acceptedFiles)
+    console.log('--> rejectedFiles', rejectedFiles)
 
-    console.log(props.value)
-
-    this.state = {
-      // isLoading: !!props.value,
-      imageUrl: props.value || '',
+    if (!acceptedFiles && !acceptedFiles[0]) {
+      return
     }
-  }
-
-  // componentDidMount() {
-  //   if (isLoading) {
-  //     // fetch image
-  //     // remove loading on callback
-  //   }
-  // }
-
-  handleImageDrop = async (acceptedFiles, rejectedFiles, context) => {
-    if (acceptedFiles && acceptedFiles[0]) {
-      try {
-        const BASE_URL = 'http://file-manager.vtex.aws-us-east-1.vtex.io'
-        const APP = 'pages-editor'
-        const BUCKET = 'images'
-
-        const imageName = acceptedFiles[0].name
-
-        const options = { method: 'put' }
-
-        const response = await fetch(
-          `${BASE_URL}/${context.account}/${
-            context.workspace
-          }/assets/${APP}/save/${BUCKET}/${imageName}`,
-          options,
-        )
-
-        if (response) {
-          this.setState({ imageUrl: response })
-        } else {
-          // Error!
-        }
-      } catch (err) {
-        console.log('Error: ', err)
-      }
-    }
+    console.log('~~> acceptedFiles[0]', acceptedFiles[0])
+    const { uploadFile } = this.props
+    uploadFile({
+      refetchQueries: [
+        { query: UploadFile },
+      ],
+      variables: { file: acceptedFiles[0] },
+    })
+      .then((data) => {
+        console.log('Image uploaded:', data)
+      })
+      .catch(err => {
+        alert('Error upload an image.')
+        console.log(err)
+      })
   }
 
   render() {
@@ -58,13 +37,9 @@ class ImageUploader extends Component {
       schema: { title },
     } = this.props
 
-    // if (this.state.isLoading) {
-    //   return <Spinner />
-    // }
-
     return (
       <RenderContextConsumer>
-        {({ account, workspace }) => (
+        {() => (
           <Fragment>
             <span className="w-100 db mb3">{title}</span>
             <div className="cursor">
@@ -72,10 +47,7 @@ class ImageUploader extends Component {
                 disabled={disabled}
                 multiple={false}
                 onDrop={(acceptedFiles, rejectedFiles) =>
-                  this.handleImageDrop(acceptedFiles, rejectedFiles, {
-                    account,
-                    workspace,
-                  })
+                  this.handleImageDrop(acceptedFiles, rejectedFiles)
                 }
               >
                 <div className="h-100">
@@ -97,10 +69,11 @@ ImageUploader.defaultProps = {
 
 ImageUploader.propTypes = {
   disabled: PropTypes.bool,
+  uploadFile: PropTypes.any,
   schema: PropTypes.shape({
     title: PropTypes.string.isRequired,
   }).isRequired,
   value: PropTypes.string,
 }
 
-export default ImageUploader
+export default graphql(UploadFile, { name: 'uploadFile' })(ImageUploader)

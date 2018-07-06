@@ -9,7 +9,7 @@
     "react": "2.x"
   },
   "dependencies": {
-    "vtex.file-manager": "0.x",
+    "vtex.file-manager-graphql": "0.x",
     "vtex.pages-graphql": "1.x",
     "vtex.styleguide": "5.x"
   },
