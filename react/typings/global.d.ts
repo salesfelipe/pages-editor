@@ -65,11 +65,12 @@ declare global {
     type: ConditionType
     message: string
     multiple: boolean,
+    value: EditorLayout,
   }
 
   type ConditionMode = 'AND' | 'OR'
 
-  type EditorLayout = 'desktop' | 'mobile' | 'tablet'
+  type EditorLayout = 'desktop' | 'mobile' | 'any'
 
   interface EditorConditionSection {
     conditions: Condition[]

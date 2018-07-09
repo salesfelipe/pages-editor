@@ -31,18 +31,21 @@ const nativeConditions: Condition[] = [
     id: 'PAGES_DEVICE_ANY',
     message: 'pages.conditions.device.any',
     multiple: false,
+    value: 'any',
     type: 'device',
   },
   {
     id: 'PAGES_DEVICE_MOBILE',
     message: 'pages.conditions.device.mobile',
     multiple: false,
+    value: 'mobile',
     type: 'device',
   },
   {
     id: 'PAGES_DEVICE_DESKTOP',
     message: 'pages.conditions.device.desktop',
     multiple: false,
+    value: 'desktop',
     type: 'device',
   },
 ]
@@ -76,7 +79,7 @@ class EditorProvider extends Component<{} & RenderContextProps, EditorProviderSt
       editMode: false,
       editTreePath: null,
       highlightTreePath: null,
-      layout: 'tablet',
+      layout: 'any',
       showAdminControls: true,
     }
   }
