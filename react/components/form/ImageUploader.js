@@ -119,4 +119,4 @@ ImageUploader.propTypes = {
   uploadFile: PropTypes.any,
 }
 
-export default graphql(UploadFile, { name: 'uploadFile' })(injectIntl(ImageUploader))
+export default injectIntl(graphql(UploadFile, { name: 'uploadFile' })(ImageUploader))
