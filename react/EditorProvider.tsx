@@ -76,7 +76,7 @@ class EditorProvider extends Component<{} & RenderContextProps, EditorProviderSt
       editMode: false,
       editTreePath: null,
       highlightTreePath: null,
-      layout: 'desktop',
+      layout: 'tablet',
       showAdminControls: true,
     }
   }
@@ -181,6 +181,10 @@ class EditorProvider extends Component<{} & RenderContextProps, EditorProviderSt
     this.setState({ activeConditions })
   }
 
+  public handleLayoutChange = (layout: string) => {
+    this.setState({ layout })
+  }
+
   public render() {
     const { children, runtime, runtime: { page } } = this.props
     const { editMode, editTreePath, highlightTreePath, showAdminControls, activeConditions, conditionMode, layout } = this.state
@@ -205,6 +209,7 @@ class EditorProvider extends Component<{} & RenderContextProps, EditorProviderSt
       mouseOverExtensionPoint: this.mouseOverExtensionPoint,
       removeCondition: this.handleRemoveCondition,
       toggleEditMode: this.handleToggleEditMode,
+      handleLayoutChange: this.handleLayoutChange
     }
 
     const adminControlsToggle = showAdminControls ? null : (

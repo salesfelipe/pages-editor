@@ -69,7 +69,7 @@ declare global {
 
   type ConditionMode = 'AND' | 'OR'
 
-  type EditorLayout = 'desktop' | 'mobile'
+  type EditorLayout = 'desktop' | 'mobile' | 'tablet'
 
   interface EditorConditionSection {
     conditions: Condition[]
