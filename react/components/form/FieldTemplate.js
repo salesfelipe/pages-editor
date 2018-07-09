@@ -1,6 +1,16 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 
+const hasFieldToBeDisplayed = (field, isLayoutMode) => {
+  return field.type === 'object'
+    ? Object.keys(field.properties).reduce(
+      (acc, currKey) =>
+        hasFieldToBeDisplayed(field.properties[currKey], isLayoutMode) || acc,
+      false
+    )
+    : !!field.isLayout === isLayoutMode
+}
+
 const FieldTemplate = ({
   children,
   classNames,
@@ -16,7 +26,10 @@ const FieldTemplate = ({
     return null
   }
 
-  return <div className={`${classNames} w-100`}>{children}</div>
+  if (hasFieldToBeDisplayed(schema, formContext.isLayoutMode)) {
+    return <div className={`${classNames} w-100`}>{children}</div>
+  }
+  return null
 }
 
 FieldTemplate.defaultProps = {
