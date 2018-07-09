@@ -4,7 +4,8 @@ import Dropzone from 'react-dropzone'
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl'
 import { RenderContextConsumer } from 'render'
 import { Button, Spinner } from 'vtex.styleguide'
-
+import UploadFile from '../../queries/UploadFile.graphql'
+import { graphql } from 'react-apollo'
 import CloseIcon from '../../images/CloseIcon'
 
 class ImageUploader extends Component {
@@ -22,39 +23,23 @@ class ImageUploader extends Component {
     this.setState({ imageUrl: '' })
   }
 
-  handleImageDrop = async (
-    acceptedFiles,
-    rejectedFiles,
-    { account, workspace },
-  ) => {
-    if (acceptedFiles && acceptedFiles[0]) {
-      this.setState({ isLoading: true })
+  handleImageDrop = async (acceptedFiles, rejectedFiles) => {
+    const { uploadFile } = this.props
 
-      try {
-        const BASE_URL = `https://${workspace}--${account}.myvtex.com`
+    if (!acceptedFiles && !acceptedFiles[0]) {
+      return
+    }
 
-        const imageName = acceptedFiles[0].name
+    try {
+      const {data: {uploadFile: {fileUrl}}} = await uploadFile({
+        variables: { file: acceptedFiles[0] },
+      })
 
-        const response = await fetch(
-          `${BASE_URL}/_v/save/${imageName}`, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            },
-            method: 'PUT',
-            body: acceptedFiles[0],
-          }
-        )
-
-        const { fileUrl } = await response.json()
-
-        this.props.onChange(fileUrl)
-        this.setState({ imageUrl: fileUrl, isLoading: false })
-        this.setState({ isLoading: false })
-      } catch (err) {
-        console.log('Error: ', err)
-
-        this.setState({ isLoading: false })
-      }
+      this.props.onChange(fileUrl)
+      this.setState({ imageUrl: fileUrl, isLoading: false })
+    } catch (e) {
+      console.log('Error: ', e)
+      this.setState({ isLoading: false })
     }
   }
 
@@ -131,6 +116,7 @@ ImageUploader.propTypes = {
     title: PropTypes.string.isRequired,
   }).isRequired,
   value: PropTypes.string,
+  uploadFile: PropTypes.any,
 }
 
-export default injectIntl(ImageUploader)
+export default graphql(UploadFile, { name: 'uploadFile' })(injectIntl(ImageUploader))
