@@ -29,10 +29,20 @@ class ImagesModal extends React.Component {
       'https://raw.githubusercontent.com/vtex-apps/carousel/master/images/banners-mobile-02.png',
       'https://raw.githubusercontent.com/vtex-apps/carousel/master/images/banners-mobile-01.png',
       'https://raw.githubusercontent.com/vtex-apps/carousel/master/images/banners-mobile-02.png',
+      'https://raw.githubusercontent.com/vtex-apps/carousel/master/images/banners-mobile-01.png',
+      'https://raw.githubusercontent.com/vtex-apps/carousel/master/images/banners-mobile-02.png',
+      'https://raw.githubusercontent.com/vtex-apps/carousel/master/images/banners-mobile-01.png',
+      'https://raw.githubusercontent.com/vtex-apps/carousel/master/images/banners-mobile-02.png',
+      'https://raw.githubusercontent.com/vtex-apps/carousel/master/images/banners-mobile-01.png',
+      'https://raw.githubusercontent.com/vtex-apps/carousel/master/images/banners-mobile-02.png',
+      'https://raw.githubusercontent.com/vtex-apps/carousel/master/images/banners-mobile-01.png',
+      'https://raw.githubusercontent.com/vtex-apps/carousel/master/images/banners-mobile-02.png',
+      'https://raw.githubusercontent.com/vtex-apps/carousel/master/images/banners-mobile-01.png',
+      'https://raw.githubusercontent.com/vtex-apps/carousel/master/images/banners-mobile-02.png',
     ]
 
     return (
-      <Fragment>
+      <div className="vtex-images-modal">
         <Button onClick={this.handleOpenModal}>Imagens</Button>
 
         <Modal isOpen={this.state.isModalOpen} onClose={this.handleCloseModal}>
@@ -50,10 +60,13 @@ class ImagesModal extends React.Component {
                 active={this.state.currentTab === 2}
                 onClick={() => this.handleTabChange(2)}
               >
-                <div className="w-100 mt4 center ph3-ns">
-                  {images.map(el => {
+                <div
+                  className="w-100 mt4 center ph3-ns overflow-y-auto"
+                  style={{ maxHeight: '300px' }}
+                >
+                  {images.map((el, i) => {
                     return (
-                      <div className="fl w-100 w-25-ns pa2">
+                      <div className="fl w-100 w-25-ns pa2" key={`${i}-im`}>
                         <img src={el} />
                       </div>
                     )
@@ -63,7 +76,7 @@ class ImagesModal extends React.Component {
             </Tabs>
           </div>
         </Modal>
-      </Fragment>
+      </div>
     )
   }
 }

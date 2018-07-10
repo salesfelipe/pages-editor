@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -19,9 +20,9 @@ html, body {
 }
 
 .shadow-editor {
-  -webkit-box-shadow: 0px -2px 1px 0px rgba(0,0,0,0.25);
-  -moz-box-shadow: 0px -2px 1px 0px rgba(0,0,0,0.25);
-  box-shadow: 0px -2px 1px 0px rgba(0,0,0,0.25);
+  -webkit-box-shadow: 0px -2px 1px 0px rgba(0, 0, 0, 0.25);
+  -moz-box-shadow: 0px -2px 1px 0px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px -2px 1px 0px rgba(0, 0, 0, 0.25);
 }
 
 .form-group {
@@ -30,8 +31,8 @@ html, body {
 }
 
 .form-group.field.field-object > label {
-  border-top: 2px solid #F0F2F4;
-  color: #C3C4C5;
+  border-top: 2px solid #f0f2f4;
+  color: #c3c4c5;
   font-weight: 700;
   margin-top: 10px;
   padding: 20px 0px 5px;
@@ -66,12 +67,12 @@ html, body {
 }
 
 .form-control {
-  border: 2px solid #E1E3E5;
+  border: 2px solid #e1e3e5;
   height: 40px;
   width: 100%;
   font-size: 14px;
   padding-left: 12px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 
 .draggable {
@@ -150,9 +151,9 @@ html, body {
     max-width: 450px;
   }
   .shadow-editor-desktop {
-    -webkit-box-shadow: 0px 4px 10px 0px rgba(86,88,107,0.5);
-    -moz-box-shadow: 0px 4px 10px 0px rgba(86,88,107,0.5);
-    box-shadow: 0px 4px 10px 0px rgba(86,88,107,0.5);
+    -webkit-box-shadow: 0px 4px 10px 0px rgba(86, 88, 107, 0.5);
+    -moz-box-shadow: 0px 4px 10px 0px rgba(86, 88, 107, 0.5);
+    box-shadow: 0px 4px 10px 0px rgba(86, 88, 107, 0.5);
   }
 }
 
