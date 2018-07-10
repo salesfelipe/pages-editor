@@ -1,5 +1,16 @@
 import PropTypes from 'prop-types'
-import { filter, find, has, keys, map, merge, pick, pickBy, prop, reduce } from 'ramda'
+import {
+  filter,
+  find,
+  has,
+  keys,
+  map,
+  merge,
+  pick,
+  pickBy,
+  prop,
+  reduce,
+} from 'ramda'
 import React, { Component } from 'react'
 import { compose, graphql } from 'react-apollo'
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl'
@@ -19,10 +30,11 @@ import ImageUploader from './form/ImageUploader'
 import ObjectFieldTemplate from './form/ObjectFieldTemplate'
 import Radio from './form/Radio'
 import Toggle from './form/Toggle'
+import ImagesModal from './form/ImagesModal'
 import ModeSwitcher from './ModeSwitcher'
 
 const defaultUiSchema = {
-  'classNames': 'editor-form',
+  classNames: 'editor-form',
 }
 
 const widgets = {
@@ -33,7 +45,7 @@ const widgets = {
   'image-uploader': ImageUploader,
 }
 
-const MODES  = ['content', 'layout']
+const MODES = ['content', 'layout']
 
 type ComponentEditorMode = 'content' | 'layout'
 
@@ -47,7 +59,10 @@ interface ComponentEditorState {
   mode: ComponentEditorMode
 }
 
-class ComponentEditor extends Component<ComponentEditorProps & RenderContextProps & EditorContextProps, ComponentEditorState> {
+class ComponentEditor extends Component<
+  ComponentEditorProps & RenderContextProps & EditorContextProps,
+  ComponentEditorState
+> {
   public static propTypes = {
     availableComponents: PropTypes.object,
     intl: intlShape.isRequired,
@@ -66,7 +81,7 @@ class ComponentEditor extends Component<ComponentEditorProps & RenderContextProp
       mode: 'content',
     }
 
-    const {component, props: extensionProps} = this.getExtension()
+    const { component, props: extensionProps } = this.getExtension()
 
     this.old = JSON.stringify({
       component,
@@ -98,9 +113,10 @@ class ComponentEditor extends Component<ComponentEditorProps & RenderContextProp
       reduce(
         (nextProps, key) =>
           merge(nextProps, {
-            [key]: properties[key].type === 'object'
-              ? getPropsFromSchema(properties[key].properties, prevProps[key])
-              : prevProps[key],
+            [key]:
+              properties[key].type === 'object'
+                ? getPropsFromSchema(properties[key].properties, prevProps[key])
+                : prevProps[key],
           }),
         {},
         filter(v => prevProps[v] !== undefined, keys(properties))
@@ -112,13 +128,20 @@ class ComponentEditor extends Component<ComponentEditorProps & RenderContextProp
   }
 
   public handleFormChange = (event: any) => {
-    const { runtime: { updateExtension }, editor: { editTreePath } } = this.props
+    const {
+      runtime: { updateExtension },
+      editor: { editTreePath },
+    } = this.props
     const { component: enumComponent } = event.formData
-    const component = enumComponent && enumComponent !== '' ? enumComponent : null
+    const component =
+      enumComponent && enumComponent !== '' ? enumComponent : null
     const Component = component && getImplementation(component)
 
     if (component && !Component) {
-      const available = find((c) => c.name === component, this.props.availableComponents.availableComponents)
+      const available = find(
+        c => c.name === component,
+        this.props.availableComponents.availableComponents
+      )
       // TODO add updateComponentAssets in runtime context and call that
       global.__RUNTIME__.components[component] = available
     }
@@ -134,12 +157,25 @@ class ComponentEditor extends Component<ComponentEditorProps & RenderContextProp
 
   public handleSave = (event: any) => {
     console.log('save', event, this.props)
-    const { saveExtension, editor: { activeConditions, anyMatch, editTreePath, editExtensionPoint, scope, device }, runtime: {page} } = this.props
+    const {
+      saveExtension,
+      editor: {
+        activeConditions,
+        anyMatch,
+        editTreePath,
+        editExtensionPoint,
+        scope,
+        device,
+      },
+      runtime: { page },
+    } = this.props
     const { component, props = {} } = this.getExtension()
     const isEmpty = this.isEmptyExtensionPoint(component)
 
     const componentImplementation = component && getImplementation(component)
-    const pickedProps = isEmpty ? null : this.getSchemaProps(componentImplementation, props)
+    const pickedProps = isEmpty
+      ? null
+      : this.getSchemaProps(componentImplementation, props)
 
     const selectedComponent = isEmpty ? null : component
 
@@ -161,7 +197,7 @@ class ComponentEditor extends Component<ComponentEditorProps & RenderContextProp
         template: null,
       },
     })
-      .then((data) => {
+      .then(data => {
         console.log('OK!', data)
         this.setState({
           loading: false,
@@ -180,7 +216,10 @@ class ComponentEditor extends Component<ComponentEditorProps & RenderContextProp
 
   public handleCancel = (event?: any) => {
     console.log('Updating extension with saved information', this.old)
-    const { editor: { editExtensionPoint, editTreePath }, runtime: { updateExtension }} = this.props
+    const {
+      editor: { editExtensionPoint, editTreePath },
+      runtime: { updateExtension },
+    } = this.props
     updateExtension(editTreePath as string, JSON.parse(this.old))
     editExtensionPoint(null)
     delete this.old
@@ -195,7 +234,7 @@ class ComponentEditor extends Component<ComponentEditorProps & RenderContextProp
     }
   }
 
-  public isEmptyExtensionPoint = (component) =>
+  public isEmptyExtensionPoint = component =>
     /vtex\.pages-editor@.*\/EmptyExtensionPoint/.test(component)
 
   /**
@@ -207,7 +246,9 @@ class ComponentEditor extends Component<ComponentEditorProps & RenderContextProp
    * @param {object} props The component props to be passed to the getSchema
    */
   public getComponentSchema = (component, props) => {
-    const componentSchema = component && (component.schema || (component.getSchema && component.getSchema(props))) || {
+    const componentSchema = (component &&
+      (component.schema ||
+        (component.getSchema && component.getSchema(props)))) || {
       properties: {},
       type: 'object',
     }
@@ -220,13 +261,16 @@ class ComponentEditor extends Component<ComponentEditorProps & RenderContextProp
      * @return {object} Schema with title, description and enumNames properties translated
      */
     const traverseAndTranslate: (schema: object) => object = schema => {
-      const translate: (value: string | {id: string, values: object}) => string =
-        value => typeof value === 'string'
+      const translate: (
+        value: string | { id: string; values: object }
+      ) => string = value =>
+        typeof value === 'string'
           ? this.props.intl.formatMessage({ id: value })
           : this.props.intl.formatMessage({ id: value.id }, value.values || {})
 
       const translatedSchema = map(
-        value => Array.isArray(value) ? map(translate, value) : translate(value),
+        value =>
+          Array.isArray(value) ? map(translate, value) : translate(value),
         pick(['title', 'description', 'enumNames'], schema)
       )
 
@@ -235,16 +279,22 @@ class ComponentEditor extends Component<ComponentEditorProps & RenderContextProp
           schema.widget,
           map(
             translate,
-            pick(['ui:help', 'ui:title', 'ui:description', 'ui:placeholder'], schema.widget)
+            pick(
+              ['ui:help', 'ui:title', 'ui:description', 'ui:placeholder'],
+              schema.widget
+            )
           )
         )
       }
 
       if (schema.type === 'object') {
         translatedSchema.properties = reduce(
-          (properties, key) => merge(properties, { [key]: traverseAndTranslate(schema.properties[key]) }),
+          (properties, key) =>
+            merge(properties, {
+              [key]: traverseAndTranslate(schema.properties[key]),
+            }),
           {},
-          keys(schema.properties),
+          keys(schema.properties)
         )
       }
 
@@ -285,20 +335,35 @@ class ComponentEditor extends Component<ComponentEditorProps & RenderContextProp
      * @param {object} properties The schema properties to be analysed.
      */
     const getDeepUiSchema = properties => {
-      const deepProperties = pickBy(property => has('properties', property), properties)
+      const deepProperties = pickBy(
+        property => has('properties', property),
+        properties
+      )
       return {
-        ...map(value => value.widget, pickBy(property => has('widget', property), properties)),
-        ...deepProperties && map(property => getDeepUiSchema(property.properties), deepProperties),
+        ...map(
+          value => value.widget,
+          pickBy(property => has('widget', property), properties)
+        ),
+        ...(deepProperties &&
+          map(
+            property => getDeepUiSchema(property.properties),
+            deepProperties
+          )),
       }
     }
 
     const uiSchema = {
-      ...map(value => value.widget, pickBy(
-        property => has('widget', property), componentSchema.properties
-      )),
-      ...map(property => getDeepUiSchema(property.properties), pickBy(
-        property => has('properties', property), componentSchema.properties
-      )),
+      ...map(
+        value => value.widget,
+        pickBy(property => has('widget', property), componentSchema.properties)
+      ),
+      ...map(
+        property => getDeepUiSchema(property.properties),
+        pickBy(
+          property => has('properties', property),
+          componentSchema.properties
+        )
+      ),
     }
 
     return {
@@ -310,15 +375,19 @@ class ComponentEditor extends Component<ComponentEditorProps & RenderContextProp
   public render() {
     const { component, props } = this.getExtension()
     const Component = getImplementation(component)
-    const editableComponents = this.props.availableComponents.availableComponents
+    const editableComponents = this.props.availableComponents
+      .availableComponents
       ? map(prop('name'), this.props.availableComponents.availableComponents)
       : []
 
-    const selectedComponent = this.isEmptyExtensionPoint(component) ? undefined : component
+    const selectedComponent = this.isEmptyExtensionPoint(component)
+      ? undefined
+      : component
 
     const componentSchema = this.getComponentSchema(Component, props)
 
-    const componentUiSchema = Component && Component.uiSchema ? Component.uiSchema : null
+    const componentUiSchema =
+      Component && Component.uiSchema ? Component.uiSchema : null
 
     const displayName = componentSchema.component || componentSchema.title
 
@@ -352,8 +421,18 @@ class ComponentEditor extends Component<ComponentEditorProps & RenderContextProp
 
     return (
       <div className="w-100 near-black">
-        <h3 className="pa4"><FormattedMessage id="pages.editor.components.title"/></h3>
-        <div className={`bg-white flex flex-column size-editor w-100 animated ${animation} ${this._isMounted ? '' : 'fadeIn'}`} style={{ animationDuration: '0.2s' }} >
+        <h3 className="pa4">
+          <FormattedMessage id="pages.editor.components.title" />
+        </h3>
+        <div
+          className={`bg-white flex flex-column size-editor w-100 animated ${animation} ${
+            this._isMounted ? '' : 'fadeIn'
+          }`}
+          style={{ animationDuration: '0.2s' }}
+        >
+          <div className="flex justify-center">
+            <ImagesModal />
+          </div>
           <div id="form__error-list-template___alert" />
           <ModeSwitcher
             activeMode={this.state.mode}
@@ -393,7 +472,12 @@ class ComponentEditor extends Component<ComponentEditorProps & RenderContextProp
               {this.state.loading ? (
                 <Spinner size={28} />
               ) : (
-                <Button block onClick={this.handleSave} size="regular" variation="tertiary">
+                <Button
+                  block
+                  onClick={this.handleSave}
+                  size="regular"
+                  variation="tertiary"
+                >
                   Save
                 </Button>
               )}
@@ -405,8 +489,12 @@ class ComponentEditor extends Component<ComponentEditorProps & RenderContextProp
   }
 
   private getExtension = (): Extension => {
-    const { editor: { editTreePath }, runtime: { extensions } } = this.props
-    const { component = null, props = {} } = extensions[editTreePath as string] || {}
+    const {
+      editor: { editTreePath },
+      runtime: { extensions },
+    } = this.props
+    const { component = null, props = {} } =
+      extensions[editTreePath as string] || {}
     return { component, props: props || {} }
   }
 }
@@ -416,12 +504,14 @@ export default compose(
   graphql(SaveExtension, { name: 'saveExtension' }),
   graphql(AvailableComponents, {
     name: 'availableComponents',
-    options: (props: ComponentEditorProps & RenderContextProps & EditorContextProps) => ({
+    options: (
+      props: ComponentEditorProps & RenderContextProps & EditorContextProps
+    ) => ({
       variables: {
         extensionName: props.editor.editTreePath,
         production: false,
         renderMajor: 7,
       },
     }),
-  }),
+  })
 )(ComponentEditor)
